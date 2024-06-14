@@ -1,4 +1,4 @@
-import streamlit as st
+from flask import Flask, request, jsonify
 import os
 from PyPDF2 import PdfReader
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -7,14 +7,12 @@ from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-
 from dotenv import load_dotenv
 
+app = Flask(__name__)
 
 load_dotenv()
 os.getenv("OPEN_API_KEY")
-
-
 
 def get_conversational_chain():
     prompt_template = """
@@ -27,8 +25,7 @@ def get_conversational_chain():
     Answer:
     """
 
-
-    prompt = PromptTemplate(template = prompt_template, input_variables = ["context", "question"])
+    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(OpenAI(), chain_type="stuff", prompt=prompt)
 
     return chain
@@ -36,32 +33,24 @@ def get_conversational_chain():
 def user_input(user_question):
     embeddings = OpenAIEmbeddings()
     
-    new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
 
     response = chain(
-        {"input_documents":docs, "question": user_question}
-        , return_only_outputs=True)
+        {"input_documents": docs, "question": user_question},
+        return_only_outputs=True
+    )
 
     return response["output_text"]
 
-def main():
-    st.set_page_config("infivent")
-    st.header("""Infivent""")
+@app.route('/ask', methods=['POST'])
+def ask_question():
+    user_question = request.json['question']
+    response = user_input(user_question)
+    return jsonify({'response': response})
 
-    if "conversation_history" not in st.session_state:
-        st.session_state.conversation_history = []
+if __name__ == '__main__':
+    app.run()
 
-    user_question = st.text_input("Ask a Question")
-
-    if user_question:
-        response = user_input(user_question)
-        st.session_state.conversation_history.append("User: " + user_question)
-        st.session_state.conversation_history.append("Bot: " + response)
-        st.text_area("Conversation History", "\n".join(st.session_state.conversation_history), height=200)
-
-
-if __name__ == "__main__":
-    main()
