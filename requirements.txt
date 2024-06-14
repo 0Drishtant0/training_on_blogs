@@ -25,6 +25,7 @@ faiss-cpu==1.8.0
 fastapi==0.111.0
 fastapi-cli==0.0.4
 filelock==3.14.0
+Flask==3.0.3
 flatbuffers==24.3.25
 frozenlist==1.4.1
 fsspec==2024.6.0
@@ -50,6 +51,7 @@ humanfriendly==10.0
 idna==3.7
 importlib_metadata==7.1.0
 importlib_resources==6.4.0
+itsdangerous==2.2.0
 Jinja2==3.1.4
 jsonpatch==1.33
 jsonpointer==2.4
@@ -144,6 +146,7 @@ watchdog==4.0.1
 watchfiles==0.22.0
 websocket-client==1.8.0
 websockets==12.0
+Werkzeug==3.0.3
 wrapt==1.16.0
 yarl==1.9.4
 zipp==3.19.1
