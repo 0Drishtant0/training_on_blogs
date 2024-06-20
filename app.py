@@ -58,7 +58,7 @@ def ask_question():
         response = user_input(user_question)
         return jsonify({'response': response})
     except Exception as e:
-        return josonify({'response':"Can You please rephrase you question"})
+        return jsonify({'response':"Can You please rephrase you question"})
 if __name__ == '__main__':
     app.run()
 
