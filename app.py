@@ -28,7 +28,7 @@ def get_conversational_chain():
 
 def user_input(user_question):
     embeddings = OpenAIEmbeddings()
-    new_db = FAISS.load_local("faiss_index5", embeddings, allow_dangerous_deserialization=True)
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question, k=2)  # Reduced from 5 to 2
 
     chain = get_conversational_chain()
